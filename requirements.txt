@@ -1,0 +1,4 @@
+ipywidgets
+transformers
+datasets
+sentence-transformers
