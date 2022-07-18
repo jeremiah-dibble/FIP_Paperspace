@@ -55,6 +55,11 @@ def download_model(instance):
         instance.model.save(instance.modelPath)
     instance.tokenizer = AutoTokenizer.from_pretrained(instance.modelPath,
                                                       use_fast=True)
+    
+    if instance.tokenizer.pad_token is None:
+        #instance.tokenizer.add_special_tokens({'pad_token': '[PAD]'})
+        instance.tokenizer.pad_token = instance.tokenizer.eos_token
+    print(instance.tokenizer.pad_token)
 # Load one of the two datasets.
 def ld(instance, dataset_num):
     instance.dataPath = instance.datsets_loc + instance.data_locs[dataset_num]
@@ -379,7 +384,8 @@ class FIP:
         print("Total # of labels = ", self.num_labels)
         # Load the model provided by the user with the correct number labels based on the two dataset.
         self.hf_model = AutoModelForSequenceClassification.from_pretrained(self.HF_loc, num_labels=self.num_labels)
-
+        print('model confing', self.hf_model.config.pad_token_id)
+        self.hf_model.config.pad_token_id = self.hf_model.config.eos_token_id
 
     # Tokenize a Dataset.
     def tokenize_data(self, dataset, dataPath):
